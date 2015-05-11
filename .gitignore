@@ -1,0 +1,7 @@
+.idea
+.ipynb_checkpoints
+*.xlsx
+*.ipynb
+*.pyc
+.env
+specific_code/
