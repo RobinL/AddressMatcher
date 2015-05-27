@@ -4,4 +4,3 @@
 *.ipynb
 *.pyc
 .env
-specific_code/
