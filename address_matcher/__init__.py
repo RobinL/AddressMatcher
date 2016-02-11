@@ -138,8 +138,13 @@ class Address(object):
 
 
     def __repr__(self):
+
         if self.probability:
-            return u"Uprn: {0}.  Address: {1}.  Probabilty {2:.2g} ".format(self.id, self.full_address, self.probability)
+            if hasattr(self,"match_description"):
+                return u"Uprn: {0}.  Address: {1}.  Probabilty: {2:.2g}. Score: {3:.2f} {4}".format(self.id, self.full_address, self.probability, self.match_score, self.match_description)
+
+        if self.probability:
+            return u"Uprn: {0}.  Address: {1}.  Probabilty {2:.2g}".format(self.id, self.full_address, self.probability)
         return self.full_address
 
 class Matcher(object):
@@ -379,7 +384,8 @@ class Matcher(object):
 
         self.set_match_stats() 
 
-        logger.debug(u"1st best match: {0} is a {1} distinguishability {2:.2f}".format(self.best_match,self.match_description, self.distinguishability))
+        logger.debug(u"1st best match: {0} distinguishability {1:.2f}".format(self.best_match, self.distinguishability))
+        logger.debug(self.match_description)
         if len(self.potential_matches)>1:
             self.second_match = self.potential_matches[1]
             logger.debug(u"2nd best match: {}".format(self.potential_matches[1]))

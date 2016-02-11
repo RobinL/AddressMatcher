@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-class DataGetter_ABP2(DataGetter_Postgres_Generic):
+class DataGetter_ABP(DataGetter_Postgres_Generic):
 
     """
     The Matcher class requires a DataGetter, which handles connections to the database, and retrieving records
