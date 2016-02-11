@@ -163,7 +163,8 @@ class Matcher(object):
         self.data_getter = data_getter
         self.address_to_match = address_obj
 
-        self.potential_matches = {} #This is a dict of address objects.  The keys are UPRNS
+        self.potential_matches = [] #This is a list of address objects.  
+        
         self.best_match = Address("")
         self.second_match = Address("")
         self.distinguishability = None
@@ -181,11 +182,10 @@ class Matcher(object):
         If only a single match is found 'short cut' the code to make it the best match
         """
         pot_matches = self.data_getter.get_potential_matches_from_address(self.address_to_match)
-        self.potential_matches.update(pot_matches)
-
+        self.potential_matches.extend(pot_matches)
         #If there's a single match, assign it to the best match
         if len(self.potential_matches) ==1:  
-            self.best_match = self.potential_matches.itervalues().next()
+            self.best_match = self.potential_matches[0]
             self.set_prob(self.best_match)
 
 
@@ -344,14 +344,16 @@ class Matcher(object):
 
         #if one of our searches has returned a single match then short-circuit the matcher - no need to score match
         if len(self.potential_matches)==1:
+            self.potential_matches = self.potential_matches[0]
             logger.debug(u"1st best match: {0} ".format(self.best_match))
+
             self.set_match_stats()
             return
 
         #Basic strategy here is going to be 'probabalistic' in a loose sense
-        num_addresses = len(self.potential_matches.keys())
+        num_addresses = len(self.potential_matches)
 
-        for uprn, address in self.potential_matches.iteritems():
+        for address in self.potential_matches:
             self.fuzzy_matched_one_number = False
             self.set_prob(address)
             s1 = set(address.ordered_tokens_postcode)
@@ -360,7 +362,7 @@ class Matcher(object):
    
 
         #Now just need to find the address with the highest probability:
-        list_of_addresses = self.potential_matches.values()
+        list_of_addresses = self.potential_matches
         list_of_addresses = sorted(list_of_addresses, key=lambda x: x.probability, reverse=False)
         self.potential_matches = list_of_addresses
 

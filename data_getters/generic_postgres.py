@@ -50,7 +50,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             where term = '{}'
         """
 
-        self.max_results = 75
+        self.max_results = 101
 
 
     @memoize
@@ -74,9 +74,9 @@ class DataGetter_Postgres_Generic(DataGetterABC):
 
         address_list= df.to_dict(orient="records")
 
-        return_dict = {}
+        return_list = []
 
-        for address_dict in address_list:
+        for uprn, address_dict in address_list.values():
             id = address_dict["id"]
             address = Address(address_dict["full_address"])
             address.postcode = None
@@ -84,9 +84,9 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             address.id = address_dict["id"]
             address.geom_wkt = None
 
-            return_dict[id] =address
+            return_list.append(address) 
 
-        return return_dict
+        return return_list
 
 
     def get_potential_matches_from_address(self, address):
@@ -111,6 +111,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
               
                 #logger.debug("before {}".format(search_tokens))
                 SQL = self.token_SQL.format(search_tokens, limit)
+                # logger.debug(SQL)
                 try:
                     df = pd.read_sql(SQL,self.data_con)
                 except DatabaseError as e:
@@ -120,7 +121,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                 
                 return df
 
-            return_dict = {}
+            return_list = []
 
             logger.debug("------------")
             logger.debug("looking for: " + address.full_address)
@@ -130,7 +131,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
 
             #If the address has two token or less, don't even try to match
             if len(tokens)<3:
-                return return_dict
+                return return_list
 
             #Start with full list of tokens (i.e. very specific)
             #and get more general by dropping the most specific tokens one
@@ -156,11 +157,11 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                 df = get_potential_matches(sub_tokens)
 
                 #If there's a single match, then we've very likely found the right address.  Return just the one
-                if len(df) == 1:
-                    return self.df_to_address_objects(df)
+                # if len(df) == 1:
+                #     return self.df_to_address_objects(df)
 
                 if len(df)>0 and len(df)<limit:
-                    return_dict.update(self.df_to_address_objects(df))
+                    return_list.extend(self.df_to_address_objects(df))
                     break
 
 
@@ -183,11 +184,12 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                 df = get_potential_matches(sub_tokens)
 
                 #If there's a single match, then we've very likely found the right address.  Return just the one
-                if len(df) == 1:
-                    return self.df_to_address_objects(df)
+                # if len(df) == 1:
+                #     return self.df_to_address_objects(df)
 
                 if len(df)>0 and len(df)<limit:
-                    return_dict.update(self.df_to_address_objects(df))
+                    # logger.debug(sub_tokens)
+                    return_list.extend(self.df_to_address_objects(df))
                     break
 
 
@@ -196,7 +198,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             # of the tokens
             num_tokens = len(tokens)
 
-            if len(return_dict) ==0 :  
+            if len(return_list) < 1:  
 
                 tried = []
                 num_tokens = len(tokens)
@@ -211,10 +213,12 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                 if address.postcode:
                     tokens = tokens + list(reversed(address.postcode.split(" ")))
 
-                for i in range(400):
+                for i in range(500):
+
 
                     sub_tokens = random.sample(tokens, take)
                     
+                    # logger.debug(", ".join(sub_tokens))
                     if tuple(sub_tokens) in tried: 
                         continue
 
@@ -223,7 +227,19 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                     tried.append(tuple(sub_tokens))
 
                     if len(df)>0 and len(df)<limit:
-                        return_dict.update(self.df_to_address_objects(df))
+                        return_list.extend(self.df_to_address_objects(df))
                         break
 
-            return return_dict
+            #Finally deduplicate based on text of address 
+
+            final_list = []
+            full_address_set = set()
+            for a in return_list:
+                if a.full_address not in full_address_set:
+                    final_list.append(a)
+                    full_address_set.add(a.full_address)
+
+
+
+
+            return final_list 
