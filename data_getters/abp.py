@@ -15,13 +15,9 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
     """
 
 
-    def __init__(self):
-      
-        con_string_freq = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=1000'"
-        self.freq_con = psycopg2.connect(con_string_freq)
+    def __init__(self, freq_conn = None, data_conn=None):
 
-        con_string_data = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=1000'"
-        self.data_con = psycopg2.connect(con_string_data)
+        DataGetter_Postgres_Generic.__init__(self, freq_conn=freq_conn, data_conn=data_conn)
 
         self.token_SQL = u"""
             select 

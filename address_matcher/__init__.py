@@ -20,17 +20,22 @@ class Address(object):
     to find a match)or the potential matches (the list of addresses which may match the target)
     """
 
-    def __init__(self,full_address):
+    def __init__(self,full_address, data_getter=None): #If it's given a freq_conn it will use it to order tokens
 
         self.full_address = None
         self.full_address_no_postcode = None
         self._postcode = None
         self.numbers = None
-        self.ordered_tokens_postcode = None
-        self.ordered_tokens_no_postcode = None
+
         self.id = None
         self.probability = 1
         self.geom_wkt = None
+
+        self.data_getter = data_getter
+
+        self.tokens_original_order_postcode = None
+        self.tokens_original_order_no_postcode = None
+        self.tokens_specific_to_general_by_freq = None
 
         if type(full_address)== str:  #This is Python 2, so if we're dealing with bytes, encode to utf-8
             full_address = full_address.decode("utf-8")
@@ -61,7 +66,10 @@ class Address(object):
         #Any numbers which are in the address will be treated slightly differently - extract them from the address
         self.numbers = af.get_numbers(self.full_address_no_postcode)
 
-        self.set_ordered_tokens()
+        self.tokens_no_postcode = self.tokenise(self.full_address_no_postcode)
+        self.tokens_postcode = self.tokenise(full_address)
+        self.set_tokens_original_order_postcode()
+        self.set_ordered_tokens_freq()
         
 
     @property
@@ -88,28 +96,33 @@ class Address(object):
         self.numbers = af.get_numbers(self.full_address_no_postcode)
 
 
-    def set_ordered_tokens(self):
+    def set_tokens_original_order_postcode(self):
         """
         Get the individual words which make up the address, excluding the postcode
         This will be used to run full text searches on the address.
 
-        The tokens are ordered in a way that attempst to make them 'specific to general'
-        i.e. postcode first, and town comes last
-        
-        This will help the datagetter serach for potential matches.
+        The original ordering of the tokens may be useful -
+        But note it's neither general to specific or specific to general.  Although the text of an address
+        tends to be specific to general, the postcode breaks this rule.
 
-        An address like 12 Smith Steet, London, TE23 8ST
-        becomes 
-        8ST TE23 12 SMITH STREET LONDON
         """
 
-        tokens = self.tokenise(self.full_address_no_postcode)
-        self.ordered_tokens_no_postcode = tokens
+        self.tokens_original_order_no_postcode= self.tokens_no_postcode
+        self.tokens_original_order_postcode = self.tokens_postcode
 
-        if self.postcode:
-            self.ordered_tokens_postcode =  list(reversed(self.postcode.split(" "))) + tokens
-        else:
-            self.ordered_tokens_postcode =  tokens
+    def set_ordered_tokens_freq(self):
+
+        """
+        Order the tokens by their term frequency using the connection
+        """
+
+        if self.data_getter:
+            tokens_to_score = list(set(self.tokens_postcode))
+            scored_tokens = [{"token" : t, "score": self.data_getter.get_freq(t)} for t in tokens_to_score]
+            scored_tokens.sort(key=lambda x: x["score"])
+            scored_tokens = [t["token"] for t in scored_tokens if t["score"]] #Only keep tokens if they exist in abp!!
+            self.tokens_specific_to_general_by_freq = scored_tokens
+
 
     def tokenise(self,address_string):
         """
@@ -133,7 +146,6 @@ class Address(object):
 
         word_list = [w for w in word_list if w not in exclude]
 
-        word_list = list(OrderedDict.fromkeys(word_list))
         return word_list
 
 
@@ -178,6 +190,8 @@ class Matcher(object):
         self.match_score = None
         self.match_description = None
 
+        self.one_match_only = False
+
         self.fuzzy_matched_one_number = False 
 
 
@@ -192,6 +206,9 @@ class Matcher(object):
         if len(self.potential_matches) ==1:  
             self.best_match = self.potential_matches[0]
             self.set_prob(self.best_match)
+            self.one_match_only = True
+        else:
+            self.one_match_only = False
 
 
     def set_prob(self,address):
@@ -264,7 +281,7 @@ class Matcher(object):
 
             #If this potential match token matches one of the tokens in the target address, then compute how
             #unusual this token is amongst potential addresses.  The more unusual the better
-            if potenital_token in self.address_to_match.ordered_tokens_postcode:
+            if potenital_token in self.address_to_match.tokens_original_order_postcode:
 
                 return_value = main_prob
 
@@ -276,9 +293,13 @@ class Matcher(object):
 
             best_score = 1
 
-            for target_token in self.address_to_match.ordered_tokens_postcode:
+            for target_token in self.address_to_match.tokens_original_order_postcode:
 
                 prob = self.data_getter.get_freq(target_token)
+
+                if prob == None: #If the prob is None that means we couldn't find it
+                    prob = 3.0e-7
+
 
                 if is_number(target_token) and is_number(potenital_token) and self.fuzzy_matched_one_number == False:
 
@@ -338,7 +359,7 @@ class Matcher(object):
 
             return best_score
 
-        address.probability = reduce(lambda x,y: x*get_prob(y), address.ordered_tokens_postcode,1.0)
+        address.probability = reduce(lambda x,y: x*get_prob(y), address.tokens_original_order_postcode,1.0)
 
 
     def find_match(self):
@@ -361,8 +382,8 @@ class Matcher(object):
         for address in self.potential_matches:
             self.fuzzy_matched_one_number = False
             self.set_prob(address)
-            s1 = set(address.ordered_tokens_postcode)
-            s2 = set(self.address_to_match.ordered_tokens_postcode)
+            s1 = set(address.tokens_original_order_postcode)
+            s2 = set(self.address_to_match.tokens_original_order_postcode)
             address.num_cannot_match = len(s1.difference(s2))
    
 
@@ -417,11 +438,11 @@ class Matcher(object):
             score = score * 0.9
         
         #Figure out how many tokens match out of the total:
-        s1 = set(self.address_to_match.ordered_tokens_postcode)
-        s2 = set(self.best_match.ordered_tokens_postcode)
+        s1 = set(self.address_to_match.tokens_original_order_postcode)
+        s2 = set(self.best_match.tokens_original_order_postcode)
 
-        tc1 = len(self.address_to_match.ordered_tokens_postcode)
-        tc2 = len(self.best_match.ordered_tokens_postcode)
+        tc1 = len(self.address_to_match.tokens_original_order_postcode)
+        tc2 = len(self.best_match.tokens_original_order_postcode)
 
         matches = s1.intersection(s2)
 

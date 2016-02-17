@@ -1,5 +1,5 @@
 import psycopg2
-from address_matcher.data_getter_abc import DataGetterABC
+from data_getters.data_getter_abc import DataGetterABC
 from address_matcher.other_functions import memoize
 import logging
 logger = logging.getLogger(__name__)
@@ -25,13 +25,13 @@ class DataGetter_Postgres_Generic(DataGetterABC):
     score for each match.
     """
 
-    def __init__(self):
-      
-        con_string_freq = "host='localhost' dbname='abp' user='postgres' password='fsa_password' options='-c statement_timeout=300'"
-        self.freq_con = psycopg2.connect(con_string_freq)
+    def __init__(self, freq_conn = None, data_conn=None, SEARCH_INTENSITY = 500):
 
-        con_string_data = "host='localhost' dbname='matching_data' user='postgres' password='fsa_password' options='-c statement_timeout=300'"
-        self.data_con = psycopg2.connect(con_string_data)
+        self.freq_con = freq_conn
+
+        self.data_con = data_conn
+
+        self.SEARCH_INTENSITY = SEARCH_INTENSITY
 
         #SQL similar to the below will go here
         self.address_SQL = u"""
@@ -65,7 +65,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
         if len(df)==1:
             main_prob = df.loc[0,"freq"]
         elif len(df)==0:
-            main_prob = 3.0E-7
+            main_prob = None #If there is a matching token which we've never seen...
         else:
             logger.info("returned more than one result for a single term {}".format(potenital_token.lower()))
         return main_prob
@@ -126,72 +126,74 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             logger.debug("------------")
             logger.debug("looking for: " + address.full_address)
 
-            tokens = address.ordered_tokens_postcode
+            tokens = address.tokens_original_order_postcode
+            # Get rid of tokens which aren't in AddressBasePremium
+
+            if address.tokens_specific_to_general_by_freq:
+                tokens_orig = [t for t in tokens if t in address.tokens_specific_to_general_by_freq]
+            else:
+                tokens_orig = tokens
+            tokens_ordered = address.tokens_specific_to_general_by_freq
             limit = self.max_results
 
             #If the address has two token or less, don't even try to match
             if len(tokens)<3:
                 return return_list
 
-            #Start with full list of tokens (i.e. very specific)
-            #and get more general by dropping the most specific tokens one
+            #Start with full list of tokens 
+            #and get more general by dropping the tokens left to right
             #at a time until we find a match
 
-            #Remember that the ordered tokens start with the postcode reversed.  
-            #e.g. if address is 1 CHAPEL LANE, TOTTERNHOE, DUNSTABLE, LU6 2BZ
-            #ordered tokens will be 2BZ LU6, 1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE etc.
 
-            #Do a specific to general search i.e. FTS
-            #2BZ LU6, 1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE
-            #LU6, 1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE
-            #1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE
+            #1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE LU6 2BZ
+            #CHAPEL LANE, TOTTERNHOE, DUNSTABLE LU6 2BZ
+            #LANE, TOTTERNHOE, DUNSTABLE LU6 2BZ
+            #TOTTERNHOE, DUNSTABLE LU6 2BZ
             #etc
 
-            for i in range(len(tokens)):
+            for tokens in [tokens_orig, tokens_ordered]:
+                for i in range(len(tokens)):
 
-                sub_tokens = tokens[i:]
-                if len(sub_tokens)<=3:
-                    df= pd.DataFrame()
-                    break
+                    sub_tokens = tokens[i:]
+                    if len(sub_tokens)<3:
+                        df= pd.DataFrame()
+                        break
 
-                df = get_potential_matches(sub_tokens)
+                    df = get_potential_matches(sub_tokens)
 
-                #If there's a single match, then we've very likely found the right address.  Return just the one
-                # if len(df) == 1:
-                #     return self.df_to_address_objects(df)
+                    # If there's a single match, then we've very likely found the right address.  Return just the one
+                    if len(df) == 1:
+                        return self.df_to_address_objects(df)
 
-                if len(df)>0 and len(df)<limit:
-                    return_list.extend(self.df_to_address_objects(df))
-                    break
-
-
+                    if len(df)>0 and len(df)<limit:
+                        return_list.extend(self.df_to_address_objects(df))
+                        break
 
             #Now try going in the opposite direction - i.e. getting rid of the latter
             #parts of the address first
 
             #Do a specific to general search i.e. FTS
-            #2BZ LU6, 1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE
-            #2BZ LU6, 1, CHAPEL LANE, TOTTERNHOE
-            #2BZ LU6, 1, CHAPEL LANE
-            #2BZ LU6, 1, CHAPEL 
+            #1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE LU6 2BZ
+            #1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE LU6 
+            #1, CHAPEL LANE, TOTTERNHOE, DUNSTABLE
+            #1, CHAPEL LANE, TOTTERNHOE, 
             #etc
-            #This ends with just a postcode search
 
-            for i in range(1,len(tokens)):
-                sub_tokens = tokens[:-i]
-                if len(sub_tokens)<=2: #to make sure it ends with a postcode search
-                    break
-                df = get_potential_matches(sub_tokens)
 
-                #If there's a single match, then we've very likely found the right address.  Return just the one
-                # if len(df) == 1:
-                #     return self.df_to_address_objects(df)
+            for tokens in [tokens_orig, tokens_ordered]:
+                for i in range(1,len(tokens)):
+                    sub_tokens = tokens[:-i]
+                    if len(sub_tokens)<3: #to make sure it ends with a postcode search
+                        break
+                    df = get_potential_matches(sub_tokens)
 
-                if len(df)>0 and len(df)<limit:
-                    # logger.debug(sub_tokens)
-                    return_list.extend(self.df_to_address_objects(df))
-                    break
+                    # If there's a single match, then we've very likely found the right address.  Return just the one
+                    if len(df) == 1:
+                        return self.df_to_address_objects(df)
 
+                    if len(df)>0 and len(df)<limit:
+                        return_list.extend(self.df_to_address_objects(df))
+                        break
 
 
             #If we still haven't found anything make a last ditch attempt by taking random selections
@@ -213,7 +215,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                 if address.postcode:
                     tokens = tokens + list(reversed(address.postcode.split(" ")))
 
-                for i in range(500):
+                for i in range(self.SEARCH_INTENSITY):
 
 
                     sub_tokens = random.sample(tokens, take)

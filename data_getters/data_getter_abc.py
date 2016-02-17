@@ -1,5 +1,6 @@
 import abc
 
+
 #Abstract base class for the datagetter
 class DataGetterABC(object):
 
@@ -10,7 +11,7 @@ class DataGetterABC(object):
     Specifically, it retrieves lists of potential matches to an address object
     and can return the frequency of occurence of tokens in addresses 
     """
-
+    
     @abc.abstractmethod
     def get_freq(self,term):
         """
@@ -18,7 +19,7 @@ class DataGetterABC(object):
         For instance, if 'road' appears in one out of a hundred words, would return 0.01
         if passed term = 'road'
 
-        Returns a float
+        Returns a float.  Returns None if token is not found
         """
 
     @abc.abstractmethod
