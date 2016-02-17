@@ -17,10 +17,10 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
 
     def __init__(self):
       
-        con_string_freq = "host='localhost' dbname='abp' user='postgres' password='' options='-c statement_timeout=1000'"
+        con_string_freq = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=1000'"
         self.freq_con = psycopg2.connect(con_string_freq)
 
-        con_string_data = "host='localhost' dbname='abp' user='postgres' password='' options='-c statement_timeout=1000'"
+        con_string_data = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=1000'"
         self.data_con = psycopg2.connect(con_string_data)
 
         self.token_SQL = u"""
