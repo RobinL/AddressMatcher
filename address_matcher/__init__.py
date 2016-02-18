@@ -70,6 +70,10 @@ class Address(object):
         self.tokens_postcode = self.tokenise(full_address)
         self.set_tokens_original_order_postcode()
         self.set_ordered_tokens_freq()
+
+        self.match_score = 0
+        self.relative_score = 0
+        self.match_description = ""
         
 
     @property
@@ -148,12 +152,16 @@ class Address(object):
 
         return word_list
 
+    def set_match_stats(self, target_address):
+        pass
+
+
 
     def __repr__(self):
 
         if self.probability:
             if hasattr(self,"match_description"):
-                return u"Uprn: {0}.  Address: {1}.  Probabilty: {2:.2g}. Score: {3:.2f} {4}".format(self.id, self.full_address, self.probability, self.match_score, self.match_description)
+                return u"Uprn: {0}.  Address: {1}.  Probabilty: {2:.2g}. Score: {3:.2f} {4}. Relative score: {5:.2f}".format(self.id, self.full_address, self.probability, self.match_score, self.match_description, self.relative_score)
 
         if self.probability:
             return u"Uprn: {0}.  Address: {1}.  Probabilty {2:.2g}".format(self.id, self.full_address, self.probability)
@@ -182,17 +190,15 @@ class Matcher(object):
 
         self.potential_matches = [] #This is a list of address objects.  
         
-        self.best_match = Address("")
-        self.second_match = Address("")
         self.distinguishability = None
         self.found = False
 
-        self.match_score = None
-        self.match_description = None
 
         self.one_match_only = False
 
         self.fuzzy_matched_one_number = False 
+
+        self.best_match = Address("")
 
 
     def load_potential_matches(self):
@@ -203,15 +209,13 @@ class Matcher(object):
         pot_matches = self.data_getter.get_potential_matches_from_address(self.address_to_match)
         self.potential_matches.extend(pot_matches)
         #If there's a single match, assign it to the best match
-        if len(self.potential_matches) ==1:  
-            self.best_match = self.potential_matches[0]
-            self.set_prob(self.best_match)
+        if len(self.potential_matches) ==1:
             self.one_match_only = True
         else:
             self.one_match_only = False
 
 
-    def set_prob(self,address):
+    def set_prob_on_address(self, address):
 
         """
         Copmute a score than in some limited sense represents the inverse likelihood
@@ -359,102 +363,43 @@ class Matcher(object):
 
             return best_score
 
-        address.probability = reduce(lambda x,y: x*get_prob(y), address.tokens_original_order_postcode,1.0)
+        address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
 
-
-    def find_match(self):
-        """
-        Look through the potential matches to find the one which
-        is most likely to be a match 
-        """
-
-        #if one of our searches has returned a single match then short-circuit the matcher - no need to score match
-        if len(self.potential_matches)==1:
-            self.potential_matches = self.potential_matches
-            logger.debug(u"1st best match: {0} ".format(self.best_match))
-
-            self.set_match_stats()
-            return
-
-        #Basic strategy here is going to be 'probabalistic' in a loose sense
-        num_addresses = len(self.potential_matches)
-
-        for address in self.potential_matches:
-            self.fuzzy_matched_one_number = False
-            self.set_prob(address)
-            s1 = set(address.tokens_original_order_postcode)
-            s2 = set(self.address_to_match.tokens_original_order_postcode)
-            address.num_cannot_match = len(s1.difference(s2))
-   
-
-        #Now just need to find the address with the highest probability:
-        list_of_addresses = self.potential_matches
-        list_of_addresses = sorted(list_of_addresses, key=lambda x: x.probability, reverse=False)
-        self.potential_matches = list_of_addresses
-
-        if len(self.potential_matches)>0:
-            self.best_match =self.potential_matches[0]
-        else:
-            self.best_match = Address("")
-        
-        if len(self.potential_matches)>1:
-            self.distinguishability = (self.potential_matches[1].probability/self.potential_matches[0].probability)/len(self.potential_matches)
-        else:
-            self.distinguishability = 1000
-
-
-        self.set_match_stats() 
-
-        logger.debug(u"1st best match: {0} distinguishability {1:.2f}".format(self.best_match, self.distinguishability))
-        logger.debug(self.match_description)
-        if len(self.potential_matches)>1:
-            self.second_match = self.potential_matches[1]
-            logger.debug(u"2nd best match: {}".format(self.potential_matches[1]))
-        else:
-            self.second_match = None
-
-        
-    #TODO Note that match stats have to be in some senes arbitrary.  Is there anything we can do to improve this?
-    def set_match_stats(self):
-        """
-        This code determines a score for the match between 0 and 1
-        where 1 is excellent and 0 is very bad.
-        """
-
-        logger.debug("adding best match scores")
-        if self.best_match.probability ==1:
-            self.best_match.match_score=0
-            self.best_match.match_description = "No match"
-            logger.debug(u"match stats:  score {}, desc {}".format(self.best_match.match_score, self.best_match.match_description))
-            return
+    def set_other_stats_on_address(self, potential_address):
 
         score = 1
 
         #Do all the numbers match?
         s1 = set(self.address_to_match.numbers)
-        s2 = set(self.best_match.numbers)
+        s2 = set(potential_address.numbers)
 
         if s1 != s2:
-            score = score * 0.9
-        
+            score = score * 0.95
+
         #Figure out how many tokens match out of the total:
-        s1 = set(self.address_to_match.tokens_original_order_postcode)
-        s2 = set(self.best_match.tokens_original_order_postcode)
+        s_atm = set(self.address_to_match.tokens_original_order_postcode)
+        s_pa = set(potential_address.tokens_original_order_postcode)
 
-        tc1 = len(self.address_to_match.tokens_original_order_postcode)
-        tc2 = len(self.best_match.tokens_original_order_postcode)
+        len_s_atm = len(self.address_to_match.tokens_original_order_postcode)
+        len_s_pa = len(potential_address.tokens_original_order_postcode)
 
-        matches = s1.intersection(s2)
+        matches = s_atm.intersection(s_pa)
+        all_tokens = s_atm.union(s_pa)
 
-        ratio =    len(matches)/min(tc1,tc2)
+        # Want to know how many tokens are in the potential target address which are NOT in the address to match
+        # e.g. ATM is Giles' Farm, 10 Wood Lane
+        # PA is caravan, field next to Giles' Farm, 10 Wood Lane
 
-        if ratio == 1:
-            self.best_match.match_score=1
-            self.best_match.match_description = "Perfect match"
+        # Essentially we want to make the score lower if there are tokens in PA which are not in ATM.  But not by much
+        # Another option is the number of non matching tokens is a tie breaker.
+        # For now let's make it affect the score - just not very much
 
-        score = score*ratio
+        num_non_matching_tokens =  len(all_tokens) - len(matches)
 
-        log10 = math.log10(self.best_match.probability)
+        score = score -  num_non_matching_tokens*0.01
+
+
+        log10 = math.log10(potential_address.probability)
         asymp_to_1 = log10*-1
         asymp_to_1 = asymp_to_1/20
 
@@ -464,7 +409,7 @@ class Matcher(object):
 
         score = score * asymp_to_1
 
-        self.best_match.match_score = score
+        potential_address.match_score = score
 
         score_list = [{"score": 0.9, "desc": "Very good match"},
                       {"score": 0.75, "desc": "Good match"},
@@ -474,8 +419,63 @@ class Matcher(object):
                       {"score": 0, "desc": "No match"}]
 
         for d in score_list:
-            if self.best_match.match_score >= d["score"]:
-                self.best_match.match_description = d["desc"]
+            if potential_address.match_score >= d["score"]:
+                potential_address.match_description = d["desc"]
                 break
-        logger.debug(u"match stats:  score {}, desc {}".format(self.best_match.match_score, self.best_match.match_description))
+
+        # logger.debug(u"match stats:  score {}, desc {}".format(self.best_match.match_score, self.best_match.match_description))
+
+
+
+    def find_match(self):
+        """
+        Look through the potential matches to find the one which
+        is most likely to be a match 
+        """
+
+        #Basic strategy here is going to be 'probabalistic' in a loose sense
+        num_addresses = len(self.potential_matches)
+
+        for address in self.potential_matches:
+
+            self.set_prob_on_address(address)
+            self.set_other_stats_on_address(address)
+
+        #Now just need to find the address with the highest score:
+        list_of_addresses = self.potential_matches
+        list_of_addresses = sorted(list_of_addresses, key=lambda x: x.match_score, reverse=True)
+        self.potential_matches = list_of_addresses
+
+
+
+        #Now we want to set statistics on the matched addresses which can only be set relative to the best match
+        self.set_comparative_match_stats()
+
+        if len(self.potential_matches)>0:
+            self.best_match = self.potential_matches[0]
+        logging.debug("\n" +  "\n".join([repr(m) for m in self.potential_matches[:5]]))
+
+
+
+        
+    #TODO Note that match stats have to be in some sense arbitrary.  Is there anything we can do to improve this?
+    def set_comparative_match_stats(self):
+        """
+        This sets match stats which are able to be defined only comparatively (relative to the best match)
+        All other match scores are determined for each potential match.
+        """
+
+        # logger.debug("adding best match scores")
+
+        if len(self.potential_matches)> 0:
+
+            best_score = self.potential_matches[0].match_score
+
+            for p in self.potential_matches:
+                p.relative_score = p.match_score - best_score
+
+            if len(self.potential_matches) > 1:
+                self.distinguishability = self.potential_matches[1].relative_score
+            else:
+                self.distinguishability = 1
 

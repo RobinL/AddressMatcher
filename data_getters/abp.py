@@ -52,7 +52,6 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
         for address_dict in address_list:
             id = address_dict["uprn"]
             address = Address(address_dict["full_address"])
-            address.postcode = None
             address.business = None
             address.id = address_dict["uprn"]
             address.lat = address_dict["lat"]
