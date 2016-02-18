@@ -5,3 +5,5 @@
 *.pyc
 .env
 random_sample.csv
+*.csv
+*.scratchpad.py

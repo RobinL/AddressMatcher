@@ -198,12 +198,12 @@ class DataGetter_Postgres_Generic(DataGetterABC):
 
             #If we still haven't found anything make a last ditch attempt by taking random selections
             # of the tokens
-            num_tokens = len(tokens)
+            num_tokens = len(tokens_ordered)
 
             if len(return_list) < 1:  
 
                 tried = []
-                num_tokens = len(tokens)
+                num_tokens = len(tokens_ordered)
                 if num_tokens > 10:
                         take = num_tokens-5 #at least 6
                 elif num_tokens > 8:
@@ -212,13 +212,12 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                     take = num_tokens-1
 
 
-                if address.postcode:
-                    tokens = tokens + list(reversed(address.postcode.split(" ")))
+                
 
                 for i in range(self.SEARCH_INTENSITY):
 
 
-                    sub_tokens = random.sample(tokens, take)
+                    sub_tokens = random.sample(tokens_ordered, take)
                     
                     # logger.debug(", ".join(sub_tokens))
                     if tuple(sub_tokens) in tried: 

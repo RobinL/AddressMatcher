@@ -19,13 +19,14 @@ data_conn = psycopg2.connect(con_string_data)
 
 #Want a 'frequency getter' type object.
 
-data_getter_abp = DataGetter_ABP(freq_conn=freq_con, data_conn=data_conn)
+data_getter_abp = DataGetter_ABP(freq_conn=freq_con, data_conn=data_conn, SEARCH_INTENSITY=5000)
 
-address = Address("Ministry Justice France", data_getter=data_getter_abp)
+address = Address("15 BARRATTS HOUSE KIMPTON CLOSE MAYPOLE BIRMINGAHM", data_getter=data_getter_abp)
+# address = Address("flat 18 grenier apartments", data_getter=data_getter_abp)
+#
 
 matcher_abp = Matcher(data_getter_abp,address)
 matcher_abp.load_potential_matches()
 matcher_abp.find_match()
-print matcher_abp.one_match_only
-print matcher_abp.best_match
-print "\n".join([repr(m) for m in matcher_abp.potential_matches[:5]])
+logging.debug("One match only is {}".format(matcher_abp.one_match_only))
+logging.debug( "\n".join([repr(m) for m in matcher_abp.potential_matches[:5]]))

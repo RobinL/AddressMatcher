@@ -342,7 +342,7 @@ class Matcher(object):
                         #If the ratio is better than 0.7 assume it's a spelling error
                         if l_ratio>0.5:
 
-                            prob = self.data_getter.get_freq(target_token)
+                            prob = self.data_getter.get_freq(potenital_token) #DOES THIS MAKE SENSE TO USE POTENTIAL TOKEN HERE?
                             prob = prob*100*(1/(l_ratio**6))
 
                             #logger.info("fuzzy matched: {} against {} with prob {}".format(target_token,potenital_token, prob))
@@ -370,7 +370,7 @@ class Matcher(object):
 
         #if one of our searches has returned a single match then short-circuit the matcher - no need to score match
         if len(self.potential_matches)==1:
-            self.potential_matches = self.potential_matches[0]
+            self.potential_matches = self.potential_matches
             logger.debug(u"1st best match: {0} ".format(self.best_match))
 
             self.set_match_stats()

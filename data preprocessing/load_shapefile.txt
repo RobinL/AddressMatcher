@@ -1,0 +1,1 @@
+shp2pgsql -I -s 27700 /Users/robinlinacre/Documents/shapefiles/bdline_essh_gb/Data/GB/district_borough_unitary_region.shp public.las | psql -d postgres
