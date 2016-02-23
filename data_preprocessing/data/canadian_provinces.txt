@@ -1,0 +1,13 @@
+alberta|ab|alta
+british columbia|b c|bc|c b
+manitoba|man|mb
+new brunswick|n b|nb
+newfoundland and labrador|n f|nl|newfoundland|nfld|nf|t n|labrador|lb
+northwest territories|n w t|nt|t n o|tno
+nova scotia|n s|ns|n é|n e
+nunavut|nu|nun|nvt
+ontario|ont|on
+prince edward island|p e i|pe|î p é|îpé|i p e|ipe
+québec|quebec|p q|qué|que|qc
+saskatchewan|sask|sk
+yukon territory|yukon|yuk|y t|yt

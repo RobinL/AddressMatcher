@@ -7,3 +7,4 @@
 random_sample.csv
 *.csv
 *.scratchpad.py
+/ipynb_backups/*

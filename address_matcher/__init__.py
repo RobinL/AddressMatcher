@@ -346,7 +346,10 @@ class Matcher(object):
                         #If the ratio is better than 0.7 assume it's a spelling error
                         if l_ratio>0.5:
 
+
                             prob = self.data_getter.get_freq(potenital_token) #DOES THIS MAKE SENSE TO USE POTENTIAL TOKEN HERE?
+                            if prob is None:
+                                prob = 1
                             prob = prob*100*(1/(l_ratio**6))
 
                             #logger.info("fuzzy matched: {} against {} with prob {}".format(target_token,potenital_token, prob))

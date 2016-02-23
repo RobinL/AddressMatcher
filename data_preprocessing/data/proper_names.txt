@@ -1,0 +1,108 @@
+aged care center|aged care centre|aged care|centre for aged care|center for aged care|center for the aged|centre for the aged|aged care facilities
+air force base|afb
+air national guard base|angb
+airport|aerodome|aprt
+apartments|apts|appartments
+arms
+bakery|boulangerie
+barn
+barracks|barrack|baracks
+bhouse|bh|board house|boarding house
+brothers
+cafe|café
+caravan park|cara|carvn|cvp|caravn park|c park|c van|car park|caravan resort|van park|caratel|caravan par|carav|carav park|carvn park|cara park|cvan park
+centre|center|cetr|cntr|ctr
+college
+club|clb
+church
+circus|crcs|crc
+clinic
+community center|communitycentre|communitycenter|community centre
+community|cmnty|cmty
+company|co
+convalescent|convalescent center|convalescent centre|convalescent home|convalescent hospital
+cooperative|coop|co-op
+cottages|cotts|cottgs
+country club|country clb|cty clb
+dam|dm
+detention|det|detn
+distributor|dstr|distrib|dstrb
+district|dist
+ex services complex
+farm|farmhouse
+forge
+garage
+geriatric unit
+gmbh
+hall
+haus
+home|h|hm|hme|hom|homes
+home for the aged
+hospital|hos|hosp|hospice|hosptl|hsp|hsptl
+hospital for women
+hostel|host|hostl|hstel|hstl
+hotel|hot|hotl|htel
+house
+incorporated|inc
+industrial|ind
+institute
+jail|gaol|prison|penitentiary
+jetty|jtty|jty
+kindergarten
+limited|ltd
+lodge|ldge|lodg
+mall|mll
+maison
+manor|mnr
+market|mkt
+mansion|mansions
+masonic home|masonic homes
+medical|med
+military|mil
+mission|msn
+monastery|monastry
+motel|mot|motl|mtel
+museum|mus
+neck|nck
+nursing
+nursing center|nursing centre
+nursing home|nh|nhome|nrs|nrsg|nsg|nurs|nrsng hm|n h|nrs home|n home|nursing hom|nursing ho|nursing h
+high school|hs|secondary school
+international|intl
+junior high school|jr high school|jhs|middle school|ms
+national|natl
+national park|np|natl park
+national recreation area|nra|natl rec area
+national wildlife refuge area|nwra|natl wildlife refuge
+nurses home|nurses|nurses home|nurse home
+office|ofc
+offices|ofcs
+office tower|ofc twr|office twr|ofc tower
+office towers|ofc twrs|office twrs|ofc towers
+orchard|orch
+park
+pre school|preschool
+precinct|pct
+proprietary|pty
+public school|ps
+retreat|rtt
+rotary|rty
+resevoir|res
+restaurant|ristorante
+retirement home|retirement village|ret village|masonic retirement village|retirement|ret vill|retirement home|retirement v|rv|gv|retiremen
+shopping center|shoppingcenter|shoppingcentre|shopping|shoppingtown|shopping centre|shopping 
+sanctuary|sanct
+school|elementary school|primary school|ps
+shop
+sisters
+spa
+square
+station|sta|stn
+terminal|term
+tower|twr
+town
+university|uni|univ|unvrsty
+units
+villa|vll
+villas|vlls
+village|vil|vge|vill|villag|villg|vlg|vlge|vllg|villages|vlgs

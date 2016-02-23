@@ -1,0 +1,11 @@
+basement|bsm|bsmt|bsmnt|basement|bsment
+floor|fl
+ground
+level|lev|levl|lvel|lvl
+lobby
+lower ground floor|lg|lgf|lgfl
+mezzanine|mezz
+platform|pf
+podium|pd
+rooftop|rt|rf
+upper ground floor|ug|ugf|ugfl

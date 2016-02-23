@@ -1,0 +1,38 @@
+bedfordshire|beds
+berkshire|berks
+buckinghamshire|bucks
+cambridgeshire|cambs
+cornwall
+derbyshire|derbys
+devon
+devon & somerset|devon/someret
+dorset
+essex
+gloucestershire|gloucs|glos
+hampshire|hants
+hampshire & dorset|hants/dorset
+herefordshire|herefords
+herefordshire & worcsestershire|heref/worcs
+hertfordshire|herts
+huntingdonshire|hunts
+kent
+lancashire|lancs
+lincolnshire|lincs
+middlesex|middx
+northamptonshire|northants
+nottinghamshire|notts
+oxfordshire|oxon
+rutland
+shropshire|salop
+suffolk
+somerset
+surrey
+staffordshire|staffs
+sussex
+warwickshire|warwicks
+wiltshire|wilts
+wiltshire & hampshire|wilts/hants
+worcestershire|worcs
+worcsestershire & gloucestershire|worcs/gloucs
+yorkshire|yorks
+west midlands|westmids

@@ -1,0 +1,8 @@
+east|e
+north|n|nrt|nrth|nth|norh|nort
+northeast|ne|neast|ntheast|nteast
+northwest|nw|nwest|nthwest|ntwest
+south|s|so|sth
+southeast|se|seast|stheast|seast|soeast
+southwest|sw|swest|sthwest|swest|sowest
+west|w|wst

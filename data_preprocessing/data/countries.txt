@@ -1,0 +1,249 @@
+afghanistan|af|afg|islamic republic of afghanistan
+åland islands|ax|ala|aland islands|åland|aland
+albania|al|alb|republic of albania
+algeria|dz|dza|people's democratic republic of algeria
+american samoa|as|asm
+andorra|ad|and|principality of andorra|principality of the valleys of andorra
+angola|ao|ago|republic of angola
+anguilla|ai|aia
+antarctica|aq|ata|antarctic continent
+antigua and barbuda|ag|atg|antiguan and barbudan|antigua and barbudan|antigua & barbuda
+argentina|ar|arg|argentine republic|republic of argentina|argentinia|argentines
+armenia|am|arm|republic of armenia
+aruba|aw|abw
+australia|au|aus|australian commonwealth|commonwealth of australia
+austria|at|aut|republic of austria
+azerbaijan|az|aze|azerbaidjan|republic of azerbaijan|azerbaijan republic
+bahrain|bh|bhr|kingdom of bahrain|bahrein
+bangladesh|bd|bgd|people's republic of bangladesh
+barbados|bb|brb|barbadoes
+belarus|by|blr|republic of belarus|belorussia|byelorussia|belarussia
+belgium|be|bel|belgian state|kingdom of belgium
+belize|bz|blz
+benin|bj|ben|dahomey|bénin|republic of benin
+bermuda|bm|bmu|bermudas
+bhutan|bt|btn|kingdom of bhutan
+bolivia|bo|bol|plurinational state of bolivia
+bosnia and herzegovina|ba|bih|bosnia|bosnia & herzegovina|bosnia herzegovina|bosnia hercegovina|bosnia and hercegovina
+botswana|bw|bwa|republic of botswana
+bouvet island|bv|bvt|bouvet øya|bouvetøya
+brazil|br|bra|republic of brazil|brasil|federative republic of brazil
+british indian ocean territory|io|iot|chagos islands|biot
+british virgin islands|vg|vgb|bvi|virgin islands
+brunei|bn|brn|sultanate of brunei|nation of brunei, the abode of peace|brunei darussalam
+bulgaria|bg|bgr|republic of bulgaria|bulgary|bul
+burkina faso|bf|bfa|burkino faso|burkina
+burma|mm|mmr|burma (myanmar)|union of myanmar|union of burma|myanmar
+burundi|bi|bdi|republic of burundi
+cambodia|kh|khm|kampuchea|kingdom of cambodia
+cameroon|cm|cmr|republic of cameroon
+canada|ca|can|dominion of canada
+cape verde|cv|cpv|republic of cape verde|cape verdes|republic of cabo verde|cabo verde|cape verde islands
+caribbean netherlands|bq|bes|bonaire|sint eustatius|saba|bes islands
+cayman islands|ky|cym|cayman islander
+central african republic|cf|caf|centrafrique|the central african republic|central africa republic|car
+chad|td|tcd|republic of chad|tchad
+chile|cl|chl|republic of chile
+china|cn|chn|communist china|people's republic of china|chinese state|p r china|prc|china pr|the people's republic of china|people's republic of china (prc)|red china|people’s republic of china|peoples republic of china|peoples' republic of china|pr china
+christmas island|cx|cxr|territory of christmas island
+cocos (keeling) islands|cc|cck|cocos islands|keeling islands|cocos keeling islands|territory of the cocos (keeling) islands
+collectivity of saint martin|mf|maf|saint martin
+colombia|co|col|republic of colombia
+comoros|km|com|comores|union of the comoros
+cook islands|ck|cok
+costa rica|cr|cri|republic of costa rica
+croatia|hr|hrv|republic of croatia|cro
+cuba|cu|cub|republic of cuba
+curaçao|cw|cuw|curacao
+cyprus|cy|cyp|republic of cyprus
+czech republic|cz|cze|the czech republic|czechia
+democratic republic of the congo|cd|cod|the democratic republic of the congo|république démocratique du congo|rdc|dr congo|democratic republic of congo|democratic republic of the congo (drc)|d r congo|congo|droc|dr congolese|drc|congo dr|congo kinshasa
+denmark|dk|dnk|kingdom of denmark|danmark|den
+djibouti|dj|dji|djbouti|republic of djibouti
+dominica|dm|dma|commonwealth of dominica
+dominican republic|do|dom|the dominican republic
+east timor|tl|tls|democratic republic of timor leste|timor leste
+ecuador|ec|ecu|republic of ecuador
+egypt|eg|egy|arab republic of egypt
+el salvador|sv|slv|republic of el salvador
+equatorial guinea|gq|gnq|republic of equatorial guinea
+eritrea|er|eri|state of eritrea
+estonia|ee|est|republic of estonia
+ethiopia|et|eth|federal democratic republic of ethiopia
+falkland islands|fk|flk|falklands|falklands islands
+faroe islands|fo|fro|faeroes|faroe|the faroe islands|faroes|faeroe islands|faroe island
+federated states of micronesia|fm|fsm
+fiji|fj|fji|fiji islands|republic of fiji
+finland|fi|fin|finnland|republic of finland
+france|fr|fra|republic of france|french state|french republic
+french guiana|gf|guf|french guyana|guyane|guiana
+french polynesia|pf|pyf
+french southern and antarctic lands|tf|atf|taaf|french southern territories|territory of the french southern and antarctic lands
+gabon|ga|gab|gabonese republic
+georgia|ge|geo|republic of georgia|georgia (country)
+germany|de|deu|federal republic of germany|ger|bundesrepublik deutschland|deutschland
+ghana|gh|gha|republic of ghana
+gibraltar|gi|gib
+greece|gr|grc|hellenic republic|hellas
+greenland|gl|grl|western greenland
+grenada|gd|grd
+guadeloupe|gp|glp|guadaloupe
+guam|gu|gum
+guatemala|gt|gtm|republic of guatemala
+guernsey|gg|ggy|bailiwick of guernsey
+guinea|gn|gin|republic of guinea|guinea conakry
+guinea bissau|gw|gnb|guinea bissauan|republic of guinea bissau
+guyana|gy|guy|co operative republic of guyana
+haiti|ht|hti|republic of haiti|haïti
+heard island and mcdonald islands|hm|hmd|heard island|heard and mcdonald islands|mcdonald islands|himi
+honduras|hn|hnd|republic of honduras
+hong kong|hk|hkg|hongkong|hksar|hong kong sar|hong kong, china|hong kong special administrative region
+hungary|hu|hun|republic of hungary
+iceland|is|isl|republic of iceland
+india|in|ind|republic of india|indian subregion
+indonesia|id|idn|republic of indonesia
+iran|ir|irn|persia|islamic republic of iran|the islamic republic of iran
+iraq|iq|irq|republic of iraq
+isle of man|im|imn|isle of mann
+israel|il|isr|state of israel
+italy|it|ita|italia|italian republic|republic of italy
+ivory coast|ci|civ|windward coast|côte d’ivoire|côte d'ivoire|cote d'ivoire|republic of côte d'ivoire
+jamaica|jm|jam
+japan|jp|jpn|nihon|japanese home islands|nippon|nihon koku
+jersey|je|jey|bailiwick of jersey
+jordan|jo|jor|hashemite kingdom of jordan|kingdom of jordan
+kazakhstan|kz|kaz|kazahstan|kazahkstan|kazakstan|republic of kazakhstan|kazhakstan|kazachstan
+kenya|ke|ken|kenia|republic of kenya
+kiribati|ki|kir|republic of kiribati|independent and sovereign republic of kiribati
+kuwait|kw|kwt|state of kuwait
+kyrgyzstan|kg|kgz|kirgizstan|kyrghyzstan|kirgizia|kyrgyz republic|kirghizistan|kirghizia|kyrgyzistan
+laos|la|lao|lao pdr|lao people's democratic republic
+latvia|lv|lva|lat|republic of latvia
+lebanon|lb|lbn|republic of lebanon|lebanese republic
+lesotho|ls|lso|kingdom of lesotho|mosotho
+liberia|lr|lbr|republic of liberia
+libya|ly|lby|state of libya
+liechtenstein|li|lie|principality of liechtenstein|lichtenstein
+lithuania|lt|ltu|republic of lithuania
+luxembourg|lu|lux|grand duchy of luxembourg
+macau|mo|mac|macau sar|macao|macau special administrative region|macau, china
+madagascar|mg|mdg|republic of madagascar
+malawi|mw|mwi|republic of malawi
+malaysia|my|mys|federation of malaysia|malayasia
+maldives|mv|mdv|the maldives|republic of maldives|maldive islands|republic of the maldives
+mali|ml|mli|malian|republic of mali|sudanese republic
+malta|mt|mlt|maltese islands|republic of malta
+marshall islands|mh|mhl|marshalls|republic of the marshall islands
+martinique|mq|mtq
+mauritania|mr|mrt|muritanya|agawej|islamic republic of mauritania
+mauritius|mu|mus|île de france|republic of mauritius
+mayotte|yt|myt
+mexico|mx|mex|united mexican states|republic of mexico|méxico
+moldova|md|mda|republic of moldova
+monaco|mc|mco|principality of monaco|mon
+mongolia|mn|mng
+montenegro|me|mne
+montserrat|ms|msr
+morocco|ma|mar|kingdom of morocco
+mozambique|mz|moz|republic of mozambique|moçambique
+namibia|na|nam|republic of namibia
+nauru|nr|nru|pleasant island|republic of nauru
+nepal|np|npl|federal democratic republic of nepal
+netherlands|nl|nld|the netherlands|ned
+new caledonia|nc|ncl
+new zealand|nz|nzl
+nicaragua|ni|nic|republic of nicaragua
+niger|ne|ner|republic of niger
+nigeria|ng|nga|federal republic of nigeria
+niue|nu|niu
+norfolk island|nf|nfk|norfolk islands
+north korea|kp|prk|dpr korea|democratic people's republic of korea|dprk
+northern mariana islands|mp|mnp|northern marianas islands|commonwealth of the northern mariana islands|cnmi|northern marianas
+norway|no|nor|norwegia|kingdom of norway
+oman|om|omn|sultanate of oman
+pakistan|pk|pak|state of pakistan|islamic republic of pakistan
+palau|pw|plw|palau islands|pelew|palau island|palaus|republic of palau|belau
+panama|pa|pan|panamá|republic of panama
+papua new guinea|pg|png|papua, new guinea|independent state of papua new guinea
+paraguay|py|pry|republic of paraguay
+peru|pe|per|perú|republic of peru
+philippines|ph|phl|philippine islands|the philippines|philippine|philippine archipelago|republic of the philippines
+pitcairn islands|pn|pcn|pitcairn|pitcairn island
+poland|pl|pol|republic of poland
+portugal|pt|prt|portuguese republic|por
+puerto rico|pr|pri|commonwealth of puerto rico|puerto rica|porto rico|pur
+qatar|qa|qat|state of qatar
+republic of ireland|ie|irl|the republic of ireland|ireland
+republic of macedonia|mk|mkd|r macedonia|macedonia
+republic of the congo|cg|cog|congo brazzaville|congo (brazzaville)|congo|republic of congo|congo republic
+réunion|re|reu|reunion|île bonaparte|reunion island|la réunion|île bourbon|réunion island
+romania|ro|rou|rumania|roumania|românia
+russia|ru|rus|russian federation|the russian federation
+rwanda|rw|rwa|republic of rwanda|ruanda
+saint barthélemy|bl|blm|saint barthelemy|st barthelemy|st barths|st barts|territorial collectivity of saint barthélemy
+saint helena, ascension and tristan da cunha|sh|shn
+saint kitts and nevis|kn|kna|st kitts and nevis|st kitts & nevis|federation of saint kitts and nevis|federation of saint christopher and nevis
+saint lucia|lc|lca|st lucia
+saint pierre and miquelon|pm|spm|st pierre & miquelon|saint pierre et miquelon|st pierre and miquelon
+saint vincent and the grenadines|vc|vct|st vincent and the grenadines|st vincent & the grenadines
+samoa|ws|wsm|independent state of samoa|sāmoa|western samoa
+san marino|sm|smr|most serene republic of san marino|republic of san marino
+são tomé and príncipe|st|stp|sao tome and principe|são tomé e príncipe|são tomé & principe|são tomé and principe|são toméan|democratic republic of são tomé and príncipe
+saudi arabia|sa|sau|kingdom of saudi arabia|ksa|saudi
+senegal|sn|sen|republic of senegal|sénégal
+serbia|rs|srb|republic of serbia
+seychelles|sc|syc|seychelles islands|republic of seychelles
+sierra leone|sl|sle|republic of sierra leone
+singapore|sg|sgp|republic of singapore
+sint maarten|sx|sxm|st maarten
+slovakia|sk|svk|slovak republic|slovensko
+slovenia|si|svn|republic of slovenia|slo
+solomon islands|sb|slb|solomon island|solomons
+somalia|so|som|federal republic of somalia
+south africa|za|zaf|republic of south africa|rsa
+south georgia and the south sandwich islands|gs|sgs|sgssi|south georgia islands
+south korea|kr|kor|rok|korea, republic of|korea republic|republic of korea
+south sudan|ss|ssd|republic of south sudan|southern sudan
+spain|es|esp|kingdom of spain|españa
+sri lanka|lk|lka|democratic socialist republic of sri lanka|ceylon
+state of palestine|ps|pse|palestinian state|the state of palestine
+sudan|sd|sdn|republic of sudan|the sudan|republic of the sudan
+suriname|sr|sur|surinam river|republic of suriname|surinam
+svalbard and jan mayen|sj|sjm
+swaziland|sz|swz|kingdom of swaziland|kangwane|eswatini
+sweden|se|swe|kingdom of sweden
+switzerland|ch|che|swi|swiss confederation|sui
+syria|sy|syr|syrian arab republic
+taiwan|tw|twn|republic of china|republic of china on taiwan|taiwan (republic of china)|roc|republic of china (roc)|republic of china (taiwan)|the republic of china
+tajikistan|tj|tjk|tajikstan|republic of tajikistan|tadzhikistan|tadjikistan
+tanzania|tz|tza|republic of tanzania|united republic of tanzania
+thailand|th|tha|siam|kingdom of thailand
+the bahamas|bs|bhs|commonwealth of the bahamas|bahama|bahama islands|bahamas|bah
+the gambia|gm|gmb|gambia|republic of the gambia
+togo|tg|tgo|republic of togo|togolese republic
+tokelau|tk|tkl
+tonga|to|ton|kingdom of tonga|friendly islands
+trinidad and tobago|tt|tto|trinidad & tobago|republic of trinidad and tobago
+tunisia|tn|tun|tunisian republic|republic of tunisia|tunesia
+turkey|tr|tur|republic of turkey|turkish republic
+turkmenistan|tm|tkm|turkmenia
+turks and caicos islands|tc|tca|caicos islands|turks islands|turks and caicos|tci|turks & caicos islands|turks & caicos
+tuvalu|tv|tuv|ellice|ellice islands
+uganda|ug|uga|republic of uganda
+ukraine|ua|ukr|ukrainia|ukraina
+united arab emirates|ae|are|united arab emirati|u a e|emirati|emirates|arab emirates|emarati|the united arab emirates|uae
+united kingdom|gb|gbr|u k|uk|united kingdom of great britain and northern ireland|the uk|britain|the united kingdom|great britain and northern ireland|great britain|kingdom of great britain
+united states|us|usa|the united states|the united states of america|united states of america|u s|the u s|u s a|united state of america|the us|america|united sates|the usa
+united states minor outlying islands|um|umi
+united states virgin islands|vi|vir|us virgin islands|usvi|u s virgin islands|american virgin islands|virgin islands of the united states
+uruguay|uy|ury|oriental republic of uruguay
+uzbekistan|uz|uzb|republic of uzbekistan
+vanuatu|vu|vut|republic of vanuatu|ni vanuatu
+vatican city|va|vat|vatican city state
+venezuela|ve|ven|venezula|bolivarian republic of venezuela
+vietnam|vn|vnm|viet nam|srv|socialist republic of vietnam|việt nam
+wallis and futuna|wf|wlf|territory of the wallis and futuna islands|wallis islands|wallis and futuna islands
+western sahara|eh|esh|taneẓroft tutrimt
+yemen|ye|yem|republic of yemen
+zambia|zm|zmb|republic of zambia
+zimbabwe|zw|zwe|zim|republic of zimbabwe

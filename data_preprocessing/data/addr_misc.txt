@@ -1,0 +1,12 @@
+cape|cpe|cp
+club|clb
+county|co
+forest|frst|fst
+lake|lk
+lakes|lks
+lock|lck
+locks|lcks
+paradise|pde|pdse
+river|r|riv|rvr
+stream|strm|stm
+township|twp|tshp
