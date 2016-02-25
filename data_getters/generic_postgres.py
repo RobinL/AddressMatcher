@@ -216,7 +216,6 @@ class DataGetter_Postgres_Generic(DataGetterABC):
 
                 for i in range(self.SEARCH_INTENSITY):
 
-
                     sub_tokens = random.sample(tokens_ordered, take)
                     
                     # logger.debug(", ".join(sub_tokens))
