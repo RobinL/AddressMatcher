@@ -27,32 +27,21 @@ from data_preprocessing.use_dicts_to_normalise_address import process_address_st
 path = "/Users/robinlinacre/Documents/python_projects/partial_address_matcher/data_preprocessing/data/custom_data.txt"
 df["address_cleaned"] = df["address_cleaned"].apply(process_address_string, args=[path])
 
-import psycopg2
-con_string = "host='localhost' dbname='postgres' user='postgres' password=''"
-conn = psycopg2.connect(con_string)
-from sqlalchemy import create_engine
-engine = create_engine('postgresql://postgres:@localhost:5432/postgres')
+# Fix misspellings
+import re
+def translate_add(full_address, translate_dict):
+    import re
+    full_address = full_address.upper()
+    pattern = re.compile(r'\b(' + '|'.join(translate_dict.keys()) + r')\b')
+    result = pattern.sub(lambda x: translate_dict[x.group()], full_address)
+    return result.upper()
+
+mis_df = pd.read_csv("all_misspellings_with_scores_final.csv")
+mis_df = mis_df[mis_df["score_ratio"]>0.8][["word","correct_spelling"]]
+translate = mis_df[~pd.isnull(mis_df["correct_spelling"])][["word","correct_spelling"]].to_dict(orient="records")
+translate_dict = {d["word"]: d["correct_spelling"] for d in translate}
 
 
-# df.to_sql("all_addresses_fixed", engine, schema="temp")
+df["address_cleaned"] = df["address_cleaned"].apply(translate_add, args=(translate_dict,))
 
-import psycopg2
-con_string = "host='localhost' dbname='postgres' user='postgres' password=''"
-conn = psycopg2.connect(con_string)
-from sqlalchemy import create_engine
-engine = create_engine('postgresql://postgres:@localhost:5432/postgres')
-
-
-sql = """
-create table temp.partial_address_term_frequencies_all_fixed as
-select word,
-count(*) as occurrences,
-1.0000 as freq from
-(select regexp_split_to_table(upper(address_cleaned), '[^\w]+|\s+') as word from temp.all_addresses_fixed) as t
-where word != ''
-group by word
-order by count(*) desc;
-"""
-cur = conn.cursor()
-cur.execute(sql)
-conn.commit()
+df.to_csv("all_addresses_for_matching.csv")

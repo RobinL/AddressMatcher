@@ -13,6 +13,7 @@ from collections import OrderedDict
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+
 class Address(object):
 
     """
@@ -165,7 +166,7 @@ class Address(object):
 
         if self.probability:
             return u"Uprn: {0}.  Address: {1}.  Probabilty {2:.2g}".format(self.id, self.full_address, self.probability)
-        return self.full_address
+        return u"{}".format(self.full_address)
 
 class Matcher(object):
 
@@ -456,7 +457,10 @@ class Matcher(object):
 
         if len(self.potential_matches)>0:
             self.best_match = self.potential_matches[0]
-        logging.debug("\n" +  "\n".join([repr(m) for m in self.potential_matches[:5]]))
+            try:
+                logging.debug(u"\n" +  "\n".join([repr(m) for m in self.potential_matches[:5]]))
+            except:
+                logging.debug("log message not printed because string not ascii")
 
 
 

@@ -60,4 +60,5 @@ west midlands|westmidlands
 greater manchester|greatermanchester
 nottingham|nottm
 shropshire|shrops
+west glamorgan|w glam
 
