@@ -264,7 +264,7 @@ class Matcher(object):
             length = max(len(str1), len(str2))
             return 1 - (d/length)
 
-        def get_prob(potenital_token):
+        def get_prob(potenital_token, target_address_tokens):
             """
             Computes a score that represents the 'distinctness' or 'discriminativeness' of this token
             - i.e. how much it helps in narrowing down the full list of all addresses.
@@ -285,7 +285,7 @@ class Matcher(object):
 
             #If this potential match token matches one of the tokens in the target address, then compute how
             #unusual this token is amongst potential addresses.  The more unusual the better
-            if potenital_token in self.address_to_match.tokens_original_order_postcode:
+            if potenital_token in target_address_tokens:
 
                 return_value = main_prob
 
@@ -297,7 +297,7 @@ class Matcher(object):
 
             best_score = 1
 
-            for target_token in self.address_to_match.tokens_original_order_postcode:
+            for target_token in target_address_tokens:
 
                 prob = self.data_getter.get_freq(target_token)
 
@@ -366,7 +366,21 @@ class Matcher(object):
 
             return best_score
 
-        address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
+        # address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
+
+        #This needs refactoring so that as we match each token, we remove it from the list of potential matches
+        target_address_tokens = self.address_to_match.tokens_original_order_postcode[:]
+        matched_address_tokens = address.tokens_original_order_postcode[:]
+
+        probs = []
+        for mt in matched_address_tokens:
+            p = get_prob(mt, target_address_tokens)
+            probs.append(p)
+            if mt in target_address_tokens:
+                target_address_tokens.remove(mt)
+
+        from operator import mul
+        address.probability = reduce(mul, probs, 1)
 
 
 
@@ -438,7 +452,7 @@ class Matcher(object):
 
         num_non_matching_tokens =  len(all_tokens) - len(matches)
 
-        score = score -  num_non_matching_tokens*0.04 #Another arbitrary constant
+        score = score -  num_non_matching_tokens*0.075 #Another arbitrary constant
 
         # Punish the score if the matching tokens are in different orders in the two addresses
         score = score * misordered(self.address_to_match.full_address, potential_address.full_address)
