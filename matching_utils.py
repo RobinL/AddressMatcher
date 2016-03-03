@@ -93,5 +93,41 @@ def get_la_best_match(address_matcher, la_conn):
         record = cur.fetchall()
         return record[0][1]
 
+import Levenshtein
+def misordered(target_address,matched_address):
+    """
+    This function returns a score that indicates whether
+    the matching tokens are in the same order, and if not,
+    by how much they are out
+
+    Returns 1 if same order, and a 0 < number < 1
+    if out of order.
+
+    The worse they are out of order, the nearer 0
+    """
+
+    # First get tokens which are in both addresses
+    t1 = target_address.split(" ")
+    t2 = matched_address.split(" ")
+
+    in_both = set(t1).intersection(set(t2))
+
+    #Get the location of the tokens which are in both in the target address, and sort - what order do they appear in
+    in_order_of_app_target = [t1.index(i) for i in in_both]
+    in_order_of_app_target.sort()
+
+    # Note we're not interested in their location, only their order - see http://stackoverflow.com/questions/6422700/how-to-get-indices-of-a-sorted-array-in-python
+    target_order = sorted(range(len(in_order_of_app_target)),key=lambda x:in_order_of_app_target[x])
+
+    in_order_of_app_target_tokens =  [t1[i] for i in in_order_of_app_target]
+    in_order_of_app_matched = [t2.index(i) for i in in_order_of_app_target_tokens]
+    matched_order = sorted(range(len(in_order_of_app_matched)),key=lambda x:in_order_of_app_matched[x])
+
+    #This is a bit of a hack but probaby works ok
+    str_t = "".join([repr(i) for i in target_order])
+    str_m = "".join([repr(i) for i in matched_order])
+
+    return Levenshtein.ratio(str_t, str_m)
+
 
 
