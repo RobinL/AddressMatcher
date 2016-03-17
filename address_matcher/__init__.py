@@ -344,7 +344,7 @@ class Matcher(object):
                         l_ratio = levenshtein_ratio(target_token, potenital_token)
 
                         #If the ratio is better than 0.7 assume it's a spelling error
-                        if l_ratio>0.5:
+                        if l_ratio>0.7:
 
 
                             prob = self.data_getter.get_freq(potenital_token) #DOES THIS MAKE SENSE TO USE POTENTIAL TOKEN HERE?
@@ -452,7 +452,7 @@ class Matcher(object):
 
         num_non_matching_tokens =  len(all_tokens) - len(matches)
 
-        score = score -  num_non_matching_tokens*0.075 #Another arbitrary constant
+        score = score -  num_non_matching_tokens*0.05 #Another arbitrary constant
 
         # Punish the score if the matching tokens are in different orders in the two addresses
         score = score * misordered(self.address_to_match.full_address, potential_address.full_address)

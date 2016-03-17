@@ -68,7 +68,7 @@ def get_la_best_match(matcher):
         record = cur.fetchall()
         return record[0][1]
 
-matches = get_matches("flat 18 grenier")
+matches = get_matches("12 CHAPEL STREET BARNALDSWICK")
 
 
 matches.potential_matches = [p for p in matches.potential_matches if p.relative_score > -0.1]
