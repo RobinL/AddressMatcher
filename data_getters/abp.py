@@ -40,7 +40,7 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
                     where term = '{}'
                 """
 
-        self.max_results = 101
+        self.max_results = 1001
 
 
     

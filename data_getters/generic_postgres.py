@@ -200,7 +200,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             # of the tokens
             num_tokens = len(tokens_ordered)
 
-            if len(return_list) < 1:  
+            if len(return_list) < 1 and num_tokens > 3:
 
                 tried = []
                 num_tokens = len(tokens_ordered)
@@ -208,14 +208,11 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                         take = num_tokens-5 #at least 6
                 elif num_tokens > 8:
                     take = num_tokens-4 #at least 5
-                else:
+                elif num_tokens > 3:
                     take = num_tokens-1
 
 
-                
-
                 for i in range(self.SEARCH_INTENSITY):
-
 
                     sub_tokens = random.sample(tokens_ordered, take)
                     
