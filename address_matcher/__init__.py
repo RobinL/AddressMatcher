@@ -17,8 +17,8 @@ logging.basicConfig(level=logging.DEBUG)
 class Address(object):
 
     """
-    The address object holds addresses, whether they be the target address (the address for which we are trying
-    to find a match)or the potential matches (the list of addresses which may match the target)
+    The address object holds addresses, whether they be the candidate address (the address for which we are trying
+    to find a match)or the potential matches (the list of addresses which may match the candidate)
     """
 
     def __init__(self,full_address, data_getter=None): #If it's given a freq_conn it will use it to order tokens
@@ -153,7 +153,7 @@ class Address(object):
 
         return word_list
 
-    def set_match_stats(self, target_address):
+    def set_match_stats(self, candidate_address):
         pass
 
 
@@ -171,7 +171,7 @@ class Address(object):
 class Matcher(object):
 
     """
-    The matcher stores the target address and the list of potential matches
+    The matcher stores the candidate address and the list of potential matches
     and contains the core algorithms that perform the match and compute
     scores on the match
 
@@ -182,7 +182,7 @@ class Matcher(object):
 
     def __init__(self, data_getter ,address_obj):
         """
-        address_obj is the 'target address' - the one for which we want to find a match
+        address_obj is the 'candidate address' - the one for which we want to find a match
         data_getter is a database connection to the AddressBase Premium dataset
         """
 
@@ -220,7 +220,7 @@ class Matcher(object):
 
         """
         Copmute a score than in some limited sense represents the inverse likelihood
-        that this address and the target address match. 
+        that this address and the candidate address match. 
 
         Note this is not a true probability - but the smaller the probability, the 
         better the match
@@ -234,7 +234,7 @@ class Matcher(object):
             The code treats house numbers (including numbers like 10A) slightly differently
             to other tokens.  This is needed so that if an exact match is not found, the  
             closest match will be a property next door (or as close as possible)
-            the the target address
+            the the candidate address
             """
             matches = re.search("^(\d+)[ABCDEFG]?$",token)
             if matches:
@@ -249,7 +249,7 @@ class Matcher(object):
             The code treats house numbers (including numbers like 10A) slightly differently
             to other tokens.  This is needed so that if an exact match is not found, the  
             closest match will be a property next door (or as close as possible)
-            the the target address
+            the the candidate address
             """
             matches = re.search("^(\d+)[ABCDEFG]?$",token)
             return int(matches.group(1))
@@ -264,7 +264,7 @@ class Matcher(object):
             length = max(len(str1), len(str2))
             return 1 - (d/length)
 
-        def get_prob(potenital_token, target_address_tokens):
+        def get_prob(potential_token, candidate_address_tokens):
             """
             Computes a score that represents the 'distinctness' or 'discriminativeness' of this token
             - i.e. how much it helps in narrowing down the full list of all addresses.
@@ -272,47 +272,43 @@ class Matcher(object):
             A score of 1 means that this token doesn't narrow down the full list at all.  A score of 0.01
             means it cuts it down by 99 per cent etc.
 
-            Note this is not a true probability because if the token cannot be found in the target address, 
+            Note this is not a true probability because if the token cannot be found in the candidate address, 
             the code attempst to find a fuzzy match.  The probability here is ill defined.
 
             Note that the eventual score will not be a true probability because it does not take into account any correlations
             between term frequencies (i.e. it is similar to naive bayes).
             """
 
-
-            main_prob = self.data_getter.get_freq(potenital_token)
-
-
-            #If this potential match token matches one of the tokens in the target address, then compute how
+            #If this potential match token matches one of the tokens in the candidate address, then compute how
             #unusual this token is amongst potential addresses.  The more unusual the better
-            if potenital_token in target_address_tokens:
 
-                return_value = main_prob
+            # If the token in the potential match address is in the candidate address,
+            # then great - let's get the probability of the term and return it
+            prob = self.data_getter.get_freq(potential_token)
+            if potential_token in candidate_address_tokens:
 
-                #logger.debug("potential token: {} found {}".format(potenital_token,return_value))
+                return_value = prob
+
+                #logger.debug("potential token: {} found {}".format(potential_token,return_value))
                 return return_value
 
-            #if this token from one of the potetial matches is not in the target address, then maybe there's a spelling error?
-            #Compare this token to each token in the target address looking for similarities
+
+            #if this token from one of the potetial matches is not in the candidate address, then maybe there's a spelling error?
+            #Compare this token to each token in the candidate address looking for similarities
 
             best_score = 1
 
-            for target_token in target_address_tokens:
+            # If the token in the address from the list of potential matches is not IN the candidate address, it is possibly a misspelling
+            # So look through the tokens of the candidate address seeing if any of them fuzzy match the potential_token
 
-                prob = self.data_getter.get_freq(target_token)
+            for candidate_token in candidate_address_tokens:
 
-                if prob == None: #If the prob is None that means we couldn't find it
-                    prob = 3.0e-7
-
-
-                if is_number(target_token) and is_number(potenital_token) and self.fuzzy_matched_one_number == False:
-
-
+                if is_number(candidate_token) and is_number(potential_token) and self.fuzzy_matched_one_number == False:
 
                     #We will want to check whether the tokens are 'number like' - if so, then 125b matches 125 and vice versa, but
                     #225 does not match 125 closely.  125 however, is a reasonable match for 126.
-                    t_num = get_number(target_token)
-                    p_num = get_number(potenital_token)
+                    t_num = get_number(candidate_token)
+                    p_num = get_number(potential_token)
 
 
                     #Calculate a distance metric using arbitrary constants such as 5 and 2.  Monotonic in closeness to actual number
@@ -320,7 +316,7 @@ class Matcher(object):
                     d_num1 = t_num + 5
                     d_num2 = p_num + 5
 
-                    #how far away is potential from target?
+                    #how far away is potential from candidate?
                     distance = math.fabs(d_num1-d_num2)/(max(d_num1,d_num2))
                     if distance != 0:
                         distance += 0.2
@@ -328,6 +324,11 @@ class Matcher(object):
                     #logger.debug("t_num = {}, p_num = {}, distance = {}, main_prob {}".format(t_num, p_num, distance, prob))
 
                     #logger.debug("adjust up by {}".format(((distance+1)**4)))
+
+
+                    if prob == None: #If the prob is None that means we couldn't find it - use a fairly standard prob in this case
+                        prob = 3.0e-7
+
                     prob = prob *((distance+1)**4)*10
 
                     #logger.debug("using prob {}".format(prob))
@@ -337,22 +338,21 @@ class Matcher(object):
 
                     best_score = min(best_score, prob)
 
-                elif not is_number(target_token) and not is_number(potenital_token):
+                elif not is_number(candidate_token) and not is_number(potential_token):
 
                     #proceed to fuzzy match only if both tokens are >3 characters, otherwise best score remains 1
-                    if len(target_token)> 3 and len(potenital_token)>3:
-                        l_ratio = levenshtein_ratio(target_token, potenital_token)
+                    if len(candidate_token)> 3 and len(potential_token)>3:
+                        l_ratio = levenshtein_ratio(candidate_token, potential_token)
 
                         #If the ratio is better than 0.7 assume it's a spelling error
                         if l_ratio>0.7:
+                            # It makes most sense to use 'potential token' here as we can be sure it's in the list of term frequencies
 
-
-                            prob = self.data_getter.get_freq(potenital_token) #DOES THIS MAKE SENSE TO USE POTENTIAL TOKEN HERE?
                             if prob is None:
                                 prob = 1
                             prob = prob*100*(1/(l_ratio**6))
 
-                            #logger.info("fuzzy matched: {} against {} with prob {}".format(target_token,potenital_token, prob))
+                            #logger.info("fuzzy matched: {} against {} with prob {}".format(candidate_token,potential_token, prob))
 
                             best_score = min(best_score, prob)
 
@@ -362,32 +362,36 @@ class Matcher(object):
                         #If this is 0.7 or above, assume we have a
 
             #If we haven't found any sort of match return 1 (i.e. leave the probability unalterned)
-            #logger.debug("potential token: {} returning from else {}".format(potenital_token,best_score))
+            #logger.debug("potential token: {} returning from else {}".format(potential_token,best_score))
 
             return best_score
 
         # address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
 
         #This needs refactoring so that as we match each token, we remove it from the list of potential matches
-        target_address_tokens = self.address_to_match.tokens_original_order_postcode[:]
+        candidate_address_tokens = self.address_to_match.tokens_original_order_postcode[:]
         matched_address_tokens = address.tokens_original_order_postcode[:]
 
         probs = []
         for mt in matched_address_tokens:
-            p = get_prob(mt, target_address_tokens)
+            p = get_prob(mt, candidate_address_tokens)
             probs.append(p)
-            if mt in target_address_tokens:
-                target_address_tokens.remove(mt)
+            if mt in candidate_address_tokens:
+                candidate_address_tokens.remove(mt)
 
         from operator import mul
-        address.probability = reduce(mul, probs, 1)
+
+        if len(probs) > 0:
+            address.probability = reduce(mul, probs, 1)
+        else:
+            address.probability = 1
 
 
 
     def set_other_stats_on_address(self, potential_address):
 
 
-        def misordered(target_address,matched_address):
+        def misordered(candidate_address,matched_address):
             """
             This function returns a score that indicates whether
             the matching tokens are in the same order, and if not,
@@ -400,24 +404,24 @@ class Matcher(object):
             """
 
             # First get tokens which are in both addresses
-            t1 = target_address.split(" ")
+            t1 = candidate_address.split(" ")
             t2 = matched_address.split(" ")
 
             in_both = set(t1).intersection(set(t2))
 
-            #Get the location of the tokens which are in both in the target address, and sort - what order do they appear in
-            in_order_of_app_target = [t1.index(i) for i in in_both]
-            in_order_of_app_target.sort()
+            #Get the location of the tokens which are in both in the candidate address, and sort - what order do they appear in
+            in_order_of_app_candidate = [t1.index(i) for i in in_both]
+            in_order_of_app_candidate.sort()
 
             # Note we're not interested in their location, only their order - see http://stackoverflow.com/questions/6422700/how-to-get-indices-of-a-sorted-array-in-python
-            target_order = sorted(range(len(in_order_of_app_target)),key=lambda x:in_order_of_app_target[x])
+            candidate_order = sorted(range(len(in_order_of_app_candidate)),key=lambda x:in_order_of_app_candidate[x])
 
-            in_order_of_app_target_tokens =  [t1[i] for i in in_order_of_app_target]
-            in_order_of_app_matched = [t2.index(i) for i in in_order_of_app_target_tokens]
+            in_order_of_app_candidate_tokens =  [t1[i] for i in in_order_of_app_candidate]
+            in_order_of_app_matched = [t2.index(i) for i in in_order_of_app_candidate_tokens]
             matched_order = sorted(range(len(in_order_of_app_matched)),key=lambda x:in_order_of_app_matched[x])
 
             #This is a bit of a hack but probaby works ok
-            str_t = "".join([repr(i) for i in target_order])
+            str_t = "".join([repr(i) for i in candidate_order])
             str_m = "".join([repr(i) for i in matched_order])
 
             return Levenshtein.ratio(str_t, str_m)
@@ -442,7 +446,7 @@ class Matcher(object):
         matches = s_atm.intersection(s_pa)
         all_tokens = s_atm.union(s_pa)
 
-        # Want to know how many tokens are in the potential target address which are NOT in the address to match
+        # Want to know how many tokens are in the potential candidate address which are NOT in the address to match
         # e.g. ATM is Giles' Farm, 10 Wood Lane
         # PA is caravan, field next to Giles' Farm, 10 Wood Lane
 
@@ -498,7 +502,6 @@ class Matcher(object):
         num_addresses = len(self.potential_matches)
 
         for address in self.potential_matches:
-
             self.set_prob_on_address(address)
             self.set_other_stats_on_address(address)
 
