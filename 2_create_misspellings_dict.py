@@ -58,7 +58,7 @@ def score_misspellings(df_mis, word):
         return None
 
 
-df = pd.read_sql("select * from temp.partial_address_term_frequencies_all_fixed", conn)
+df = pd.read_sql("select * from temp.partial_address_term_frequencies_all_fixed_2016", conn)
 
 counter = 1
 for r in df.iterrows():
@@ -71,7 +71,11 @@ for r in df.iterrows():
     word = row["word"]
     found = None
     if len(word) > 3:
-        found = data_getter_abp.get_freq(word)
+        try:
+            found = data_getter_abp.get_freq(word)
+        except:
+            print counter
+            print word
     else:
         continue
 
@@ -93,4 +97,4 @@ for r in df.iterrows():
             pass
 
 df2 = df[~pd.isnull(df["correct_spelling"])]
-df2.to_csv("all_misspellings_with_scores_final.csv")
+df2.to_csv("all_misspellings_with_scores_final_2016.csv")

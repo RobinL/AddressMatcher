@@ -4,9 +4,9 @@ from data_preprocessing.utils import add_space_to_postcode
 import re
 
 import pandas as pd
-df = pd.read_csv("all_addresses.csv")
+df = pd.read_csv("all_addresses_2016_fixed.csv")
 df = df.fillna("")
-df = df[["full_address", "Match.Status"]]
+df = df[["full_address", "tempid", "personid", "caseid"]]
 
 # Correct basic elements of punctuation and make upper case
 df["address_cleaned"] = df["full_address"].str.replace("."," ").str.replace("'", "").str.upper()
@@ -36,7 +36,7 @@ def translate_add(full_address, translate_dict):
     result = pattern.sub(lambda x: translate_dict[x.group()], full_address)
     return result.upper()
 
-mis_df = pd.read_csv("all_misspellings_with_scores_final.csv")
+mis_df = pd.read_csv("all_misspellings_with_scores_final_2016.csv")
 mis_df = mis_df[mis_df["score_ratio"]>0.8][["word","correct_spelling"]]
 translate = mis_df[~pd.isnull(mis_df["correct_spelling"])][["word","correct_spelling"]].to_dict(orient="records")
 translate_dict = {d["word"]: d["correct_spelling"] for d in translate}
@@ -44,4 +44,4 @@ translate_dict = {d["word"]: d["correct_spelling"] for d in translate}
 
 df["address_cleaned"] = df["address_cleaned"].apply(translate_add, args=(translate_dict,))
 
-df.to_csv("all_addresses_for_matching.csv")
+df.to_csv("all_addresses_for_matching_2016.csv")

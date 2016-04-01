@@ -37,7 +37,7 @@ Base = automap_base()
 # reflect the tables
 Base.prepare(engine, reflect=True)
 
-Address = Base.classes.all_addresses_with_match_info
+Address = Base.classes.all_addresses_with_match_info_2016
 
 session = Session(engine)
 ids = session.query(Address.id).filter(Address.match_attempted == False).all()

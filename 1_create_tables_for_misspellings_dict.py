@@ -4,9 +4,9 @@ from data_preprocessing.utils import add_space_to_postcode
 import re
 
 import pandas as pd
-df = pd.read_csv("all_addresses.csv")
+df = pd.read_csv("all_addresses_2016_fixed.csv", encoding="utf-8")
 df = df.fillna("")
-df = df[["full_address", "Match.Status"]]
+df = df[["full_address", "tempid", "personid", "caseid"]]
 
 # Correct basic elements of punctuation and make upper case
 df["address_cleaned"] = df["full_address"].str.replace("."," ").str.replace("'", "").str.upper()
@@ -34,7 +34,7 @@ from sqlalchemy import create_engine
 engine = create_engine('postgresql://postgres:@localhost:5432/postgres')
 
 
-df.to_sql("all_addresses_fixed", engine, schema="temp")
+df.to_sql("all_addresses_fixed_2016", engine, schema="temp")
 
 import psycopg2
 con_string = "host='localhost' dbname='postgres' user='postgres' password=''"
@@ -44,11 +44,11 @@ engine = create_engine('postgresql://postgres:@localhost:5432/postgres')
 
 
 sql = """
-create table temp.partial_address_term_frequencies_all_fixed as
+create table temp.partial_address_term_frequencies_all_fixed_2016 as
 select word,
 count(*) as occurrences,
 1.0000 as freq from
-(select regexp_split_to_table(upper(address_cleaned), '[^\w]+|\s+') as word from temp.all_addresses_fixed) as t
+(select regexp_split_to_table(upper(address_cleaned), '[^\w]+|\s+') as word from temp.all_addresses_fixed_2016) as t
 where word != ''
 group by word
 order by count(*) desc;

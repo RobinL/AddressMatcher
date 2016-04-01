@@ -1,8 +1,8 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import sqlalchemy
-df = pd.read_csv("all_addresses_for_matching.csv")
-df = df[["full_address", "Match.Status", "address_cleaned"]]
+df = pd.read_csv("all_addresses_for_matching_2016.csv")
+df = df[["full_address",  "address_cleaned", "tempid", "personid", "caseid"]]
 df = df.fillna("")
 
 new_columns = ["match_attempted",
@@ -24,20 +24,22 @@ for c in new_columns:
 
 df["match_attempted"] = False
 
-df.rename(columns={"Match.Status":"matchcode_match_status"}, inplace=True)
+# df.rename(columns={"Match.Status":"matchcode_match_status"}, inplace=True)
 
 # Now write this table out to postgres
 con_string = "host='localhost' dbname='postgres' user='postgres' password=''"
 
 
 engine = create_engine('postgresql://postgres:@localhost:5432/postgres')
-df.to_sql("all_addresses_with_match_info", engine,
+df.to_sql("all_addresses_with_match_info_2016", engine,
           index=True,
           index_label = "id",
           if_exists='replace',
           dtype = {'full_address': sqlalchemy.types.String,
-                    'matchcode_match_status': sqlalchemy.types.String,
                     'address_cleaned': sqlalchemy.types.String,
+                    'tempid': sqlalchemy.types.String,
+                    'personid': sqlalchemy.types.String,
+                    'caseid': sqlalchemy.types.String,
                     'match_attempted': sqlalchemy.types.BOOLEAN,
                     'num_la_matches': sqlalchemy.types.NUMERIC,
                     'probability': sqlalchemy.types.NUMERIC,
@@ -56,7 +58,7 @@ df.to_sql("all_addresses_with_match_info", engine,
 
 
 sql = """
-ALTER TABLE all_addresses_with_match_info ADD PRIMARY KEY (id);
+ALTER TABLE all_addresses_with_match_info_2016 ADD PRIMARY KEY (id);
 """
 import psycopg2
 con_string = "host='localhost' dbname='postgres' user='postgres' password=''"
