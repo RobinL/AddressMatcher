@@ -13,6 +13,7 @@ from collections import OrderedDict
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+
 class Address(object):
 
     """
@@ -165,7 +166,7 @@ class Address(object):
 
         if self.probability:
             return u"Uprn: {0}.  Address: {1}.  Probabilty {2:.2g}".format(self.id, self.full_address, self.probability)
-        return self.full_address
+        return u"{}".format(self.full_address)
 
 class Matcher(object):
 
@@ -253,7 +254,6 @@ class Matcher(object):
             matches = re.search("^(\d+)[ABCDEFG]?$",token)
             return int(matches.group(1))
 
-
         def levenshtein_ratio(str1, str2):
             """
             Computes a ratio of number of edits to length of string
@@ -264,7 +264,7 @@ class Matcher(object):
             length = max(len(str1), len(str2))
             return 1 - (d/length)
 
-        def get_prob(potenital_token):
+        def get_prob(potenital_token, target_address_tokens):
             """
             Computes a score that represents the 'distinctness' or 'discriminativeness' of this token
             - i.e. how much it helps in narrowing down the full list of all addresses.
@@ -285,7 +285,7 @@ class Matcher(object):
 
             #If this potential match token matches one of the tokens in the target address, then compute how
             #unusual this token is amongst potential addresses.  The more unusual the better
-            if potenital_token in self.address_to_match.tokens_original_order_postcode:
+            if potenital_token in target_address_tokens:
 
                 return_value = main_prob
 
@@ -297,7 +297,7 @@ class Matcher(object):
 
             best_score = 1
 
-            for target_token in self.address_to_match.tokens_original_order_postcode:
+            for target_token in target_address_tokens:
 
                 prob = self.data_getter.get_freq(target_token)
 
@@ -344,7 +344,7 @@ class Matcher(object):
                         l_ratio = levenshtein_ratio(target_token, potenital_token)
 
                         #If the ratio is better than 0.7 assume it's a spelling error
-                        if l_ratio>0.5:
+                        if l_ratio>0.7:
 
 
                             prob = self.data_getter.get_freq(potenital_token) #DOES THIS MAKE SENSE TO USE POTENTIAL TOKEN HERE?
@@ -366,9 +366,62 @@ class Matcher(object):
 
             return best_score
 
-        address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
+        # address.probability = reduce(lambda x,y: x*get_prob(y), list(set(address.tokens_original_order_postcode) - set(address.numbers)) + address.numbers,1.0) #Only feed tokens in once except numbers- order doesn't matter here
+
+        #This needs refactoring so that as we match each token, we remove it from the list of potential matches
+        target_address_tokens = self.address_to_match.tokens_original_order_postcode[:]
+        matched_address_tokens = address.tokens_original_order_postcode[:]
+
+        probs = []
+        for mt in matched_address_tokens:
+            p = get_prob(mt, target_address_tokens)
+            probs.append(p)
+            if mt in target_address_tokens:
+                target_address_tokens.remove(mt)
+
+        from operator import mul
+        address.probability = reduce(mul, probs, 1)
+
+
 
     def set_other_stats_on_address(self, potential_address):
+
+
+        def misordered(target_address,matched_address):
+            """
+            This function returns a score that indicates whether
+            the matching tokens are in the same order, and if not,
+            by how much they are out
+
+            Returns 1 if same order, and a 0 < number < 1
+            if out of order.
+
+            The worse they are out of order, the nearer 0
+            """
+
+            # First get tokens which are in both addresses
+            t1 = target_address.split(" ")
+            t2 = matched_address.split(" ")
+
+            in_both = set(t1).intersection(set(t2))
+
+            #Get the location of the tokens which are in both in the target address, and sort - what order do they appear in
+            in_order_of_app_target = [t1.index(i) for i in in_both]
+            in_order_of_app_target.sort()
+
+            # Note we're not interested in their location, only their order - see http://stackoverflow.com/questions/6422700/how-to-get-indices-of-a-sorted-array-in-python
+            target_order = sorted(range(len(in_order_of_app_target)),key=lambda x:in_order_of_app_target[x])
+
+            in_order_of_app_target_tokens =  [t1[i] for i in in_order_of_app_target]
+            in_order_of_app_matched = [t2.index(i) for i in in_order_of_app_target_tokens]
+            matched_order = sorted(range(len(in_order_of_app_matched)),key=lambda x:in_order_of_app_matched[x])
+
+            #This is a bit of a hack but probaby works ok
+            str_t = "".join([repr(i) for i in target_order])
+            str_m = "".join([repr(i) for i in matched_order])
+
+            return Levenshtein.ratio(str_t, str_m)
+
 
         score = 1
 
@@ -399,8 +452,13 @@ class Matcher(object):
 
         num_non_matching_tokens =  len(all_tokens) - len(matches)
 
-        score = score -  num_non_matching_tokens*0.01
+        score = score -  num_non_matching_tokens*0.05 #Another arbitrary constant
 
+        # Punish the score if the matching tokens are in different orders in the two addresses
+        score = score * misordered(self.address_to_match.full_address, potential_address.full_address)
+
+        # Finally the following code is a way of mapping the probabilities, which are really tiny numbers, onto
+        # a score roughly in the region 0 to 1
 
         log10 = math.log10(potential_address.probability)
         asymp_to_1 = log10*-1
@@ -449,14 +507,15 @@ class Matcher(object):
         list_of_addresses = sorted(list_of_addresses, key=lambda x: x.match_score, reverse=True)
         self.potential_matches = list_of_addresses
 
-
-
         #Now we want to set statistics on the matched addresses which can only be set relative to the best match
         self.set_comparative_match_stats()
 
         if len(self.potential_matches)>0:
             self.best_match = self.potential_matches[0]
-        logging.debug("\n" +  "\n".join([repr(m) for m in self.potential_matches[:5]]))
+            try:
+                logging.debug(u"\n" +  "\n".join([repr(m) for m in self.potential_matches[:5]]))
+            except:
+                logging.debug("log message not printed because string not ascii")
 
 
 
