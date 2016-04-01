@@ -19,7 +19,7 @@ freq_con = psycopg2.connect(con_string_freq)
 con_string_data = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=400'"
 data_conn = psycopg2.connect(con_string_data)
 
-data_getter_abp = DataGetter_ABP(freq_conn=freq_con, data_conn=data_conn, SEARCH_INTENSITY=5000)
+data_getter_abp = DataGetter_ABP(freq_conn=freq_con, data_conn=data_conn, SEARCH_INTENSITY=500, MAX_RESULTS=200)
 
 # Simple utility function that takes an address string and returns the match object
 # This contains the list of potential matches, the best matches etc

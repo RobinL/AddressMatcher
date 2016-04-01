@@ -25,7 +25,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
     score for each match.
     """
 
-    def __init__(self, freq_conn = None, data_conn=None, SEARCH_INTENSITY = 500):
+    def __init__(self, freq_conn = None, data_conn=None, SEARCH_INTENSITY = 500, MAX_RESULTS=250):
 
         self.freq_con = freq_conn
 
@@ -50,7 +50,7 @@ class DataGetter_Postgres_Generic(DataGetterABC):
             where term = '{}'
         """
 
-        self.max_results = 101
+        self.max_results = MAX_RESULTS
 
 
     @memoize
@@ -162,8 +162,8 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                     df = get_potential_matches(sub_tokens)
 
                     # If there's a single match, then we've very likely found the right address.  Return just the one
-                    if len(df) == 1:
-                        return self.df_to_address_objects(df)
+                    # if len(df) == 1:
+                    #     return self.df_to_address_objects(df)
 
                     if len(df)>0 and len(df)<limit:
                         return_list.extend(self.df_to_address_objects(df))
@@ -188,13 +188,15 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                     df = get_potential_matches(sub_tokens)
 
                     # If there's a single match, then we've very likely found the right address.  Return just the one
-                    if len(df) == 1:
-                        return self.df_to_address_objects(df)
+                    # if len(df) == 1:
+                    #     return self.df_to_address_objects(df)
 
                     if len(df)>0 and len(df)<limit:
                         return_list.extend(self.df_to_address_objects(df))
                         break
 
+            if len(df) == 1:
+                return self.df_to_address_objects(df)
 
             #If we still haven't found anything make a last ditch attempt by taking random selections
             # of the tokens

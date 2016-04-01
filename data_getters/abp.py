@@ -15,9 +15,9 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
     """
 
 
-    def __init__(self, freq_conn = None, data_conn=None, SEARCH_INTENSITY = 500):
+    def __init__(self, freq_conn = None, data_conn=None, SEARCH_INTENSITY = 500, MAX_RESULTS=250):
 
-        DataGetter_Postgres_Generic.__init__(self, freq_conn=freq_conn, data_conn=data_conn, SEARCH_INTENSITY=SEARCH_INTENSITY)
+        DataGetter_Postgres_Generic.__init__(self, freq_conn=freq_conn, data_conn=data_conn, SEARCH_INTENSITY=SEARCH_INTENSITY, MAX_RESULTS=MAX_RESULTS)
 
         self.token_SQL = u"""
             select 
@@ -40,7 +40,7 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
                     where term = '{}'
                 """
 
-        self.max_results = 1001
+        self.max_results = MAX_RESULTS
 
 
     

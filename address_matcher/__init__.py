@@ -1,4 +1,4 @@
- #!/usr/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import division
 
@@ -7,11 +7,12 @@ import math
 import Levenshtein
 import address_functions as af
 import logging
-import string
-from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+MISSPELLING_THRESHOLD = 0.7
+
 
 
 class Address(object):
@@ -155,8 +156,6 @@ class Address(object):
 
     def set_match_stats(self, candidate_address):
         pass
-
-
 
     def __repr__(self):
 
@@ -345,7 +344,7 @@ class Matcher(object):
                         l_ratio = levenshtein_ratio(candidate_token, potential_token)
 
                         #If the ratio is better than 0.7 assume it's a spelling error
-                        if l_ratio>0.7:
+                        if l_ratio>MISSPELLING_THRESHOLD:
                             # It makes most sense to use 'potential token' here as we can be sure it's in the list of term frequencies
 
                             if prob is None:
