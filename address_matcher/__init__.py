@@ -9,7 +9,7 @@ import address_functions as af
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+
 
 MISSPELLING_THRESHOLD = 0.7
 
@@ -288,6 +288,8 @@ class Matcher(object):
 
                 return_value = prob
 
+
+
                 #logger.debug("potential token: {} found {}".format(potential_token,return_value))
                 return return_value
 
@@ -302,42 +304,7 @@ class Matcher(object):
 
             for candidate_token in candidate_address_tokens:
 
-                if is_number(candidate_token) and is_number(potential_token) and self.fuzzy_matched_one_number == False:
-
-                    #We will want to check whether the tokens are 'number like' - if so, then 125b matches 125 and vice versa, but
-                    #225 does not match 125 closely.  125 however, is a reasonable match for 126.
-                    t_num = get_number(candidate_token)
-                    p_num = get_number(potential_token)
-
-
-                    #Calculate a distance metric using arbitrary constants such as 5 and 2.  Monotonic in closeness to actual number
-
-                    d_num1 = t_num + 5
-                    d_num2 = p_num + 5
-
-                    #how far away is potential from candidate?
-                    distance = math.fabs(d_num1-d_num2)/(max(d_num1,d_num2))
-                    if distance != 0:
-                        distance += 0.2
-
-                    #logger.debug("t_num = {}, p_num = {}, distance = {}, main_prob {}".format(t_num, p_num, distance, prob))
-
-                    #logger.debug("adjust up by {}".format(((distance+1)**4)))
-
-
-                    if prob == None: #If the prob is None that means we couldn't find it - use a fairly standard prob in this case
-                        prob = 3.0e-7
-
-                    prob = prob *((distance+1)**4)*10
-
-                    #logger.debug("using prob {}".format(prob))
-
-                    if prob < 1:
-                        self.fuzzy_matched_one_number = True
-
-                    best_score = min(best_score, prob)
-
-                elif not is_number(candidate_token) and not is_number(potential_token):
+                if not is_number(candidate_token) and not is_number(potential_token):
 
                     #proceed to fuzzy match only if both tokens are >3 characters, otherwise best score remains 1
                     if len(candidate_token)> 3 and len(potential_token)>3:

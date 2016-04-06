@@ -31,6 +31,7 @@ class DataGetter_ABP(DataGetter_Postgres_Generic):
                 where 
                 to_tsvector('english',full_address)
                 @@ to_tsquery('english','{0}')
+
                 limit {1};
             """
 

@@ -195,14 +195,42 @@ class DataGetter_Postgres_Generic(DataGetterABC):
                         return_list.extend(self.df_to_address_objects(df))
                         break
 
-            if len(df) == 1:
-                return self.df_to_address_objects(df)
+            from address_matcher import Matcher, Address
+            from data_getters.abp import DataGetter_ABP
+            con_string_data = "host='localhost' dbname='postgres' user='postgres' password='' options='-c statement_timeout=400'"
+
+            data_conn = psycopg2.connect(con_string_data)
+
+            data_getter_abp = DataGetter_ABP(freq_conn=data_conn, data_conn=data_conn, SEARCH_INTENSITY=500, MAX_RESULTS=200)
+
+            # Simple utility function that takes an address string and returns the match object
+            # This contains the list of potential matches, the best matches etc
+
+
+
+
+            if len(return_list) > 0:
+
+                from address_matcher import Matcher
+
+                matcher = Matcher(data_getter_abp,address)
+                matcher.potential_matches = return_list
+                matcher.find_match()
+                if matcher.best_match.match_score > 0.6:
+                    return return_list
+
+
 
             #If we still haven't found anything make a last ditch attempt by taking random selections
             # of the tokens
             num_tokens = len(tokens_ordered)
 
-            if len(return_list) < 1 and num_tokens > 3:
+            # from address_matcher import Matcher
+            #
+
+
+
+            if num_tokens > 3:
 
                 tried = []
                 num_tokens = len(tokens_ordered)
@@ -216,7 +244,13 @@ class DataGetter_Postgres_Generic(DataGetterABC):
 
                 for i in range(self.SEARCH_INTENSITY):
 
-                    sub_tokens = random.sample(tokens_ordered, take)
+                    if take - 4 >0:
+                        take2 = take - random.choice(range(take-4))
+                    else:
+                        take2 = take
+
+
+                    sub_tokens = random.sample(tokens_ordered, take2)
                     
                     # logger.debug(", ".join(sub_tokens))
                     if tuple(sub_tokens) in tried: 
